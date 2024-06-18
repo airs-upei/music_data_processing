@@ -22,6 +22,18 @@ These five algorithms work with the same goal- pick the best possible number of 
 Finally, in order to test the efficiency of our algorithms, the results produced by each of the five algorithms were correlated with the results obtained by our human analyst(using praat). The purpose of this was basically to compare the results from both pYIN and the manual process (praat) to see if our automated pitch analyzer outperforms our human analyser.
 
 
+## Getting Started
+**Step 1**: Get this repo in your machine either of the folloing ways:
+
+a. Download the zip folder by clicking this link: https://github.com/airs-upei/music_data_processing/archive/refs/heads/main.zip 
+
+b. Clone the repo by running this command in your terminal: **git clone** https://github.com/airs-upei/music_data_processing.git
+
+**Step 2**: After downloading, unzip the folder in any location of your choice.
+
+**Step 3**: Open the project in RStudio or any R supported IDE of your choice.
+
+
 ## Introduction to the Models (Model 0 - 4)
 As metioned before, the purpose of this Readme file is to explain each of the models, including the thought process behind the algorithm design, where to find specific models and files, and how to setup up your machine to run the models.
 
@@ -32,4 +44,42 @@ The result from running this was used to perform a correlation of the retained t
 
 Even though this is our simplest model, it does not really do any work except throw out valuable data. Each of the other models later developed perfomr more complex work compared to this basic Model 0.
 
-#### Running Model 0
+#### Model 0 Code Description
+
+**Navigating Files**
+Step 1:
+From the root folder, navigate to the models folder, and open folder named **model_0**
+
+Step 2:
+Choose any of of the folders, **model_0_Daa** or **model_0_Doo**
+You would notice 2 R scripts,  **model0Daa.R** and **fill_in_values_daa.R**
+
+**model0Daa.R**
+
+This file is the starting point(main) for all of the data processing for model 0. It handles tasks such as:
+i. Reading all the RDS files from pYIN.
+
+ii. Calling the function (fillInValues) that handles the picking of random notes.
+
+iii. Performing correlations with corresponding R data.
+
+iv. Creating new excel sheet for data to be written and saving the sheet.
+
+**fill_in_values_daa.R**
+
+This file contains the logic/algorithm for picking the notes for Model 0. It is used by model0Daa.R to perform the major operation
+
+**Running Model 0 Daa**
+To run model 0, source all the files in model_0_Daa folder and call the function like this:
+
+<pre>
+model0Daa(folderPathToPyinFiles, praatData, outputFolder)
+</pre>
+
+_Parameter Descriptions_
+
+@param **folderPathToPyinFiles**: The folder path to where all your pYIN RDS files for a particular study are stored.
+
+@param **praatData** The dataframe containing the corresponding praat data for that study.
+
+@param **outputFolder**: Where do you want the results to be stored
