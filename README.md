@@ -13,4 +13,13 @@ To address this problem and improve the efficiency of our research, we introduce
 
 pYIN is basically designed to automatically analyse the musical pitches in an audio recording. While our participants perform their singing tests, the pYIN program steadily operates in the background, carefully analysing the pitches of the participants as they sing. Indeed, this solved our problem of automating our pitch analysis 
 
-However, 
+However, while the pitch analysing software, pYIN, has greatly improved the efficiency of our data analysis, it is not a perfect system yet. From time to time, we encounter errors relating to what we have called errors of commission (overproduction of frequencies) for tone sequences. For instance, a participant might be presented with a sequence of three frequencies in their singing test, but pYIN might analyse and report more than that, like say, five frequencies. This error has the potential to affect our overall results and possibly, the validity of our research.
+
+As a result of this, our need for a solution to correct this errors of commission was required. We formulated and introduced five separate traditional algorithms to remove the excess notes produced by pYIN, and pick out the correct notes.
+
+These five algorithms work with the same goal- pick the best possible number of notes from a list of produced notes. In practice, if three frequencies were presented to the participant, but pYIN produces five or six or seven or eight or ... notes, these algorithms then get to work with their unique solutions to identify and recognize the ideal frequencies out of those detected by pYIN.
+
+Finally, in order to test the efficiency of our algorithms, the results produced by each of the five algorithms were correlated with the results obtained by our human analyst(using praat). The purpose of this approach was essentially to compare the results from both pYIN and the manual process (praat).
+
+
+
