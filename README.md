@@ -23,6 +23,13 @@ Finally, in order to test the efficiency of our algorithms, the results produced
 
 
 ## Introduction to the Models (Model 0 - 4)
-As metioned before, the purpose of this Readme file is to explain each of the models clearly, including the thought process behind the algorithm design, where to find specific models and files, and how to setup up your machine to run the models.
+As metioned before, the purpose of this Readme file is to explain each of the models, including the thought process behind the algorithm design, where to find specific models and files, and how to setup up your machine to run the models.
 
 ### Model 0
+As explained in our paper, model 0, employs a straightforward method of eliminating the excess notes that occur during pitch analysis. The principle is simple: it eliminates or deletes all tone sequences which generate more frequencies than expected. This means that it retains only those that produce the correct number of notes. To demonstrate this better, if a sequence is expected to deliver three frequencies, but it ends up producing five, Model 0 will entirely discard that sequence. However, if the expected result is three frequencies and the tone sequence produces three, it will be retained.
+
+The result from running this was used to perform a correlation of the retained tone sequences (those not deleted) with the expert results obtained by our human analyst.
+
+Even though this is our simplest model, it does not really do any work except throw out valuable data. Each of the other models later developed perfomr more complex work compared to this basic Model 0.
+
+#### Running Model 0
