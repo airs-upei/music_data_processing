@@ -15,11 +15,14 @@ pYIN is basically designed to automatically analyse the musical pitches in an au
 
 However, while the pitch analysing software, pYIN, has greatly improved the efficiency of our data analysis, it is not a perfect system yet. From time to time, we encounter errors relating to what we have called errors of commission (overproduction of frequencies) for tone sequences. For instance, a participant might be presented with a sequence of three frequencies in their singing test, but pYIN might analyse and report more than that, like say, five frequencies. This error has the potential to affect our overall results and possibly, the validity of our research.
 
-As a result of this, our need for a solution to correct this errors of commission was required. We formulated and introduced five separate traditional algorithms to remove the excess notes produced by pYIN, and pick out the correct notes.
+As a result of this, our need for a solution to correct this errors of commission was required. We created and introduced five separate traditional algorithms (models) to remove the excess notes produced by pYIN, and pick out the correct notes.
 
 These five algorithms work with the same goal- pick the best possible number of notes from a list of produced notes. In practice, if three frequencies were presented to the participant, but pYIN produces five or six or seven or eight or ... notes, these algorithms then get to work with their unique solutions to identify and recognize the ideal frequencies out of those detected by pYIN.
 
-Finally, in order to test the efficiency of our algorithms, the results produced by each of the five algorithms were correlated with the results obtained by our human analyst(using praat). The purpose of this approach was essentially to compare the results from both pYIN and the manual process (praat).
+Finally, in order to test the efficiency of our algorithms, the results produced by each of the five algorithms were correlated with the results obtained by our human analyst(using praat). The purpose of this was basically to compare the results from both pYIN and the manual process (praat) to see if our automated pitch analyzer outperforms our human analyser.
 
 
+## Introduction to the Models (Model 0 - 4)
+As metioned before, the purpose of this Readme file is to explain each of the models clearly, including the thought process behind the algorithm design, where to find specific models and files, and how to setup up your machine to run the models.
 
+### Model 0
