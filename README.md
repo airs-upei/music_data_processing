@@ -192,12 +192,14 @@ Durations: 0.57      0.80
 Notes:     353.27    334.03 
 </pre>
 
-**Model 2C** is a further improvement to model 2B. From model 2B operations, after the notes have been reordered based on their desceding order durations, we introduce further logic to process the notes:
-1. If the shortest duration note is at the beginning of the list, it and the next note are averaged. The value returned from the average is used to replace the shortest note and the next note.
-2. If shortest duration note is at the end of the list, it and the previous note are averaged, and the value returned from the average is used to replace the shortest note and the note before it.
+**Model 2C** is a further improvement to model 2B. From model 2B operations, after the notes have been reordered based on their descending order durations, we introduce further logic to process the notes:
+
+1. If the shortest duration note is at the beginning of the list, the shortest duration note and the next note are averaged. The value returned from the average is used to replace the shortest note and the next note.
+2. If shortest duration note is at the end of the list, the shortest duration note and the previous note are averaged, and the value returned from the average is used to replace the shortest note and the note before it.
 3. If it's in the middle, the function finds the note with the maximum duration among its neighbors (left & right), averages them, and removes that note together with that maximum duration.
 
 **Running Model 2C**
+
 The core function performing this model operations is `model2C_processDataWithDurationAndAverage` which can found in this path: https://github.com/airs-upei/music_data_processing/blob/main/models/model_2/read_and_process_data_with_durations.R
 
 The function takes three arguments as input:
@@ -206,13 +208,13 @@ The function takes three arguments as input:
 2. `notes`: A vector containing the notes to be processed.
 3. `notesDuration`: A vector of durations corresponding to each note in the notes vector.
 
-From the function, you would notice that the goal of the function is to reduce the length of `notes` to `numExpected` by:
+If you take a look at the function, you would notice that the goal of the function is to reduce the length of `notes` to `numExpected` by:
 1. Finding and removing the notes with the shortest durations first (if duration of notes are the same, the one appearing later in the list is removed first).
 2. Replacing the removed note with the average of itself and the adjacent note with the longest duration.
 
 Just as explained before, a breakdown of the logic in the function is outlined below:
 
-- If `numExpected` equals the length of notes vector, no processing is needed; the input notes are returned the same way it is.
+- If `numExpected` equals the length of notes vector, no processing is needed; the input notes are returned the same way as they are.
 - Our function then identifies the `numExpected` longest durations, and the remaining durations are considered as ‘shortest’.
 - From here onwards, we enter a loop to process the notes with the shortest duration:
   - If the shortest duration note is at the beginning of the list, the note and its next note are averaged, and then the value is used to replace the shortest duration note and its next note.
@@ -224,7 +226,7 @@ Just as explained before, a breakdown of the logic in the function is outlined b
 ### Model 3: Weighted Durations
 Similar to model 2 where we paid attention to the longest durations, model 3 pays attention to the durations of the notes but this time uses their weights to calculate and generate the notes expected from the list.
 
-**Model 3 Code Description**
+**Model 3 Algorithm Description**
 
 The core function housing our algorithm for model 3 is `processDataModifiedWeightDurations`. As always, our ultimate goal has always been to to reduce the length of input notes to `numExpected` but this time, we are doing the reductions based on the weighted durations. A complete breakdown of Model 3 algorithm is shown below:
 
@@ -234,7 +236,7 @@ Breakdown of algorithm
    * `notes`: a list of notes.
    * `notesDurations`: a list of durations corresponding to each note.
 
-2. To start, a check is made to see if the length of notes is equal to `numExpected`. If so, our function doesn't need to process anything and returns the notes.
+2. To start, we conduct a check to see if the length of notes is equal to `numExpected`. If so, our function doesn't need to process anything and returns the notes.
 
 3. If the above condition is not met, an array of differences between every two consecutive notes is created and stored in `diffArray` vector.
 
@@ -245,7 +247,7 @@ Breakdown of algorithm
    * The weighted note is calculated based on the formula `(notes[indexMin - 1] * (notesDurations[indexMin - 1]/sumWeights)) + (notes[indexMin] * (notesDurations[indexMin]/sumWeights))`, where `sumWeights` is the sum of the durations of the two notes.
    * This new weighted note replaces `notes[indexMin]`. The previous note in the vector (`notes[indexMin-1]`) is also removed.
    
-6. After updating the notes series, we also adjust the `notesDurations` vector accordingly to reflect the number of notes.
+6. After updating the notes vector, we also adjust the `notesDurations` vector accordingly to reflect the number of notes.
 
 7. The function keeps calling itself recursively and processing the data until finally the length of notes becomes `numExpected`. Then, it will round off all elements of the `notes` and return them.
 
