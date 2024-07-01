@@ -274,6 +274,7 @@ iv. Creating new excel sheet for data to be written and saving the sheet.
 This file contains the logic/algorithm for picking the notes for Model 3. It contains 2 major functions, readAndProcessDataModel3Modified and processDataModifiedWeightDurations. It is used by model3.R to perform the major logic behind model 3.
 
 **Running Model 3**
+
 To run model 3, source all the files in model_3 folder and call the function like this:
 
 <pre>
