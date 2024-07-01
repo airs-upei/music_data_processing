@@ -181,7 +181,7 @@ When durations are arranged in descending order, we have
 
 Pick the first 2
 
-**Model 2B** is an improvement on Model 2A by paying attention to the original sequence of the notes. Just like Model 2A, it arranges the notes' durations in descending order and accordingly makes the note selection based on the ground truth number of expected nuotes. However, unlike Model 2A, it reorders the chosen frequencies to match their original sequence or indices. 
+**Model 2B** is an improvement on Model 2A by paying attention to the original sequence of the notes. Just like Model 2A, it arranges the notes' durations in descending order and accordingly makes the note selection based on the ground truth number of expected notes. However, unlike Model 2A, it reorders the chosen frequencies to match their original sequence or indices. 
 
 Taking the same example from Trial 7, as in Model 2A, the durations are sorted in a descending order, and the last two smallest durations are discarded. After discarding the shorter durations, the remaining durations are rearranged to align with their original order. As you can see, notes are selected not only based on their durations but also while maintaining their original presentation sequence. 
 
@@ -192,9 +192,103 @@ Durations: 0.57      0.80
 Notes:     353.27    334.03 
 </pre>
 
-**Model 2C**
+**Model 2C** is a further improvement to model 2B. From model 2B operations, after the notes have been reordered based on their desceding order durations, we introduce further logic to process the notes:
+1. If the shortest duration note is at the beginning of the list, it and the next note are averaged. The value returned from the average is used to replace the shortest note and the next note.
+2. If shortest duration note is at the end of the list, it and the previous note are averaged, and the value returned from the average is used to replace the shortest note and the note before it.
+3. If it's in the middle, the function finds the note with the maximum duration among its neighbors (left & right), averages them, and removes that note together with that maximum duration.
+
+**Running Model 2C**
+The core function performing this model operations is `model2C_processDataWithDurationAndAverage` which can found in this path: https://github.com/airs-upei/music_data_processing/blob/main/models/model_2/read_and_process_data_with_durations.R
+
+The function takes three arguments as input:
+
+1. `numExpected`: The number of notes expected after the processing.
+2. `notes`: A vector containing the notes to be processed.
+3. `notesDuration`: A vector of durations corresponding to each note in the notes vector.
+
+From the function, you would notice that the goal of the function is to reduce the length of `notes` to `numExpected` by:
+1. Finding and removing the notes with the shortest durations first (if duration of notes are the same, the one appearing later in the list is removed first).
+2. Replacing the removed note with the average of itself and the adjacent note with the longest duration.
+
+Just as explained before, a breakdown of the logic in the function is outlined below:
+
+- If `numExpected` equals the length of notes vector, no processing is needed; the input notes are returned the same way it is.
+- Our function then identifies the `numExpected` longest durations, and the remaining durations are considered as ‘shortest’.
+- From here onwards, we enter a loop to process the notes with the shortest duration:
+  - If the shortest duration note is at the beginning of the list, the note and its next note are averaged, and then the value is used to replace the shortest duration note and its next note.
+  - If it is at the end of the list, the notes and the previous note are averaged, and we place them both with the new value.
+  - If it's in the middle, our function finds the note with the maximum duration among its neighbors, averages them, and removes the note with the maximum duration.
+- The process continues until notes are reduced to `numExpected` value.
 
 
+### Model 3: Weighted Durations
+Similar to model 2 where we paid attention to the longest durations, model 3 pays attention to the durations of the notes but this time uses their weights to calculate and generate the notes expected from the list.
 
+**Model 3 Code Description**
+
+The core function housing our algorithm for model 3 is `processDataModifiedWeightDurations`. As always, our ultimate goal has always been to to reduce the length of input notes to `numExpected` but this time, we are doing the reductions based on the weighted durations. A complete breakdown of Model 3 algorithm is shown below:
+
+Breakdown of algorithm
+1. `processDataModifiedWeightDurations` accepts three parameters:
+   * `numExpected`: the expected length of the output note series.
+   * `notes`: a list of notes.
+   * `notesDurations`: a list of durations corresponding to each note.
+
+2. To start, a check is made to see if the length of notes is equal to `numExpected`. If so, our function doesn't need to process anything and returns the notes.
+
+3. If the above condition is not met, an array of differences between every two consecutive notes is created and stored in `diffArray` vector.
+
+4. Our algorithm then identifies the smallest element in `diffArray`(the smallest difference between two notes). This minimum difference is found using: `indexMin <- which.min(diffArray)`.
+
+5. After the two consecutive notes with the smallest difference are identified, the next step is to replace the two notes with a weighted average of the two. 
+
+   * The weighted note is calculated based on the formula `(notes[indexMin - 1] * (notesDurations[indexMin - 1]/sumWeights)) + (notes[indexMin] * (notesDurations[indexMin]/sumWeights))`, where `sumWeights` is the sum of the durations of the two notes.
+   * This new weighted note replaces `notes[indexMin]`. The previous note in the vector (`notes[indexMin-1]`) is also removed.
+   
+6. After updating the notes series, we also adjust the `notesDurations` vector accordingly to reflect the number of notes.
+
+7. The function keeps calling itself recursively and processing the data until finally the length of notes becomes `numExpected`. Then, it will round off all elements of the `notes` and return them.
+
+**Navigating Files**
+
+Step 1:
+
+From the root folder, navigate to the models folder, and open folder named **model_3**
+
+Step 2:
+You would notice 2 R scripts,  **model3.R** and **read_and_process_data_model_3.R**
+
+**model3.R**
+
+This file is the starting point(main) for all of the data processing for model 3. It handles tasks such as:
+i. Reading all the RDS files from pYIN.
+
+ii. Calling the algorithmic function (readAndProcessDataModel3Modified) that handles the main logic for model 3.
+
+iii. Performing correlations with corresponding R data from Praat.
+
+iv. Creating new excel sheet for data to be written and saving the sheet.
+
+**read_and_process_data_model_3.R**
+
+This file contains the logic/algorithm for picking the notes for Model 3. It contains 2 major functions, readAndProcessDataModel3Modified and processDataModifiedWeightDurations. It is used by model3.R to perform the major logic behind model 3.
+
+**Running Model 3**
+To run model 3, source all the files in model_3 folder and call the function like this:
+
+<pre>
+model3(folderPathToPyinFiles, praatData, outputFolder)
+</pre>
+
+_Parameter Descriptions_
+
+@param **folderPathToPyinFiles**: The folder path to where all your pYIN RDS files for a particular study are stored.
+
+@param **praatData** The dataframe containing the corresponding praat data for that study.
+
+@param **outputFolder**: Where do you want the results to be stored
+
+
+### Model 4: Minimum Difference from Ground Truth Model
 
 
